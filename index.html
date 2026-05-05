@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Feliz Día de la Madre</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+--rose:#e8a0bf;--rose-deep:#c7698d;--cream:#fdf6f0;--gold:#d4a96a;
+--blush:#f5d5e0;--sage:#c5cfc6;--warm:#f9ebe0;--text:#4a3728;
+}
+html,body{width:100%;height:100%;overflow:hidden;background:#1a1014;font-family:'Cormorant Garamond',serif}
+
+/* CARD CONTAINER */
+.card-wrapper{
+  position:fixed;inset:0;display:flex;align-items:center;justify-content:center;
+  perspective:1800px;
+}
+.book{
+  width:min(92vw,420px);height:min(85vh,750px);position:relative;
+  transform-style:preserve-3d;
+}
+
+/* PAGES */
+.page{
+  position:absolute;inset:0;backface-visibility:hidden;
+  border-radius:16px;overflow:hidden;
+  box-shadow:0 20px 60px rgba(0,0,0,0.3),0 0 0 1px rgba(255,255,255,0.05);
+}
+
+/* PAGE 1 - FRONT */
+.page-front{
+  background:linear-gradient(160deg,var(--cream) 0%,var(--warm) 40%,var(--blush) 100%);
+  z-index:2;
+  transform-origin:left center;
+  transition:transform 1.4s cubic-bezier(0.645,0.045,0.355,1);
+}
+.page-front.flipped{
+  transform:rotateY(-180deg);
+}
+
+/* PAGE 2 - BACK */
+.page-back{
+  background:linear-gradient(160deg,var(--cream) 0%,var(--warm) 50%,#f3e8df 100%);
+  z-index:1;
+}
+
+/* PAGE 1 CONTENT */
+.front-content{
+  width:100%;height:100%;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;padding:32px 24px;
+  position:relative;
+}
+.ornament-top,.ornament-bottom{
+  position:absolute;left:50%;transform:translateX(-50%);
+  width:120px;opacity:0.35;
+}
+.ornament-top{top:20px}
+.ornament-bottom{bottom:20px;transform:translateX(-50%) rotate(180deg)}
+
+.front-subtitle{
+  font-family:'Cormorant Garamond',serif;font-size:15px;letter-spacing:4px;
+  text-transform:uppercase;color:var(--rose-deep);margin-bottom:12px;
+  opacity:0;animation:fadeUp 1s 0.3s forwards;
+}
+.front-title{
+  font-family:'Playfair Display',serif;font-size:clamp(28px,7vw,42px);
+  font-weight:700;color:var(--text);text-align:center;line-height:1.2;
+  margin-bottom:24px;opacity:0;animation:fadeUp 1s 0.6s forwards;
+}
+.front-title em{
+  font-style:italic;color:var(--rose-deep);display:block;
+  font-size:clamp(32px,8vw,48px);margin-top:4px;
+}
+
+/* PHOTO PLACEHOLDER - HORIZONTAL */
+.photo-frame-h{
+  width:85%;aspect-ratio:16/10;border-radius:12px;overflow:hidden;
+  border:3px solid rgba(212,169,106,0.4);position:relative;
+  background:linear-gradient(135deg,var(--blush),var(--warm));
+  box-shadow:0 8px 32px rgba(0,0,0,0.1);
+  opacity:0;animation:fadeUp 1s 0.9s forwards;
+}
+.photo-frame-h img{
+  width:100%;height:100%;object-fit:cover;display:block;
+}
+.photo-placeholder{
+  width:100%;height:100%;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:8px;color:var(--rose-deep);
+}
+.photo-placeholder svg{width:40px;height:40px;opacity:0.5}
+.photo-placeholder span{font-size:13px;opacity:0.6;letter-spacing:1px}
+
+.front-divider{
+  width:60px;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);
+  margin:20px 0 16px;opacity:0;animation:fadeUp 1s 1.2s forwards;
+}
+.front-hint{
+  font-size:13px;color:var(--rose-deep);opacity:0;
+  animation:fadeUp 1s 1.5s forwards,pulse 2s 2.5s infinite;
+  letter-spacing:1px;
+}
+
+/* PAGE 2 CONTENT */
+.back-content{
+  width:100%;height:100%;display:flex;flex-direction:column;
+  padding:28px 20px 24px;overflow-y:auto;-webkit-overflow-scrolling:touch;
+  position:relative;
+}
+.back-header{
+  text-align:center;margin-bottom:16px;
+}
+.back-header h2{
+  font-family:'Playfair Display',serif;font-size:22px;color:var(--text);
+  font-weight:600;
+}
+.back-header .line{
+  width:50px;height:2px;margin:8px auto 0;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent);
+}
+
+/* PHOTOS ROW */
+.photos-row{
+  display:flex;gap:12px;margin-bottom:20px;flex-shrink:0;
+}
+.photo-frame-v{
+  flex:1;aspect-ratio:3/4;border-radius:10px;overflow:hidden;
+  border:2px solid rgba(212,169,106,0.3);cursor:pointer;
+  position:relative;transition:transform 0.3s,box-shadow 0.3s;
+  background:linear-gradient(135deg,var(--blush),var(--warm));
+  box-shadow:0 4px 16px rgba(0,0,0,0.08);
+}
+.photo-frame-v:active{transform:scale(0.97)}
+.photo-frame-v img{width:100%;height:100%;object-fit:cover;display:block}
+.tap-hint{
+  position:absolute;bottom:6px;right:6px;background:rgba(255,255,255,0.85);
+  border-radius:20px;padding:3px 8px;font-size:10px;color:var(--text);
+  pointer-events:none;opacity:0.8;
+}
+
+/* MESSAGE */
+.message-box{
+  flex:1;padding:16px;background:rgba(255,255,255,0.5);
+  border-radius:12px;border:1px solid rgba(212,169,106,0.2);
+  position:relative;
+}
+.message-box p{
+  font-family:'Cormorant Garamond',serif;font-size:clamp(14px,3.8vw,17px);
+  line-height:1.65;color:var(--text);text-align:center;
+  text-wrap:pretty;
+}
+.firma{
+  font-family:'Playfair Display',serif;font-style:italic;
+  font-size:16px;color:var(--rose-deep);text-align:center;
+  margin-top:16px;
+}
+
+/* FLOATING HEARTS */
+.hearts-container{position:fixed;inset:0;pointer-events:none;z-index:100;overflow:hidden}
+.heart{
+  position:absolute;bottom:-40px;opacity:0;
+  animation:floatHeart linear forwards;
+}
+.heart svg{filter:drop-shadow(0 2px 4px rgba(0,0,0,0.1))}
+
+@keyframes floatHeart{
+  0%{opacity:0;transform:translateY(0) rotate(0deg) scale(0.5)}
+  10%{opacity:0.8}
+  50%{opacity:0.6}
+  100%{opacity:0;transform:translateY(-110vh) rotate(45deg) scale(1)}
+}
+
+/* LIGHTBOX */
+.lightbox{
+  position:fixed;inset:0;background:rgba(10,5,8,0.92);z-index:200;
+  display:none;align-items:center;justify-content:center;
+  opacity:0;transition:opacity 0.3s;
+}
+.lightbox.active{display:flex;opacity:1}
+.lightbox-img{
+  max-width:92vw;max-height:88vh;border-radius:12px;
+  box-shadow:0 20px 60px rgba(0,0,0,0.5);
+  transform:scale(0.8);transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
+}
+.lightbox.active .lightbox-img{transform:scale(1)}
+.lightbox-close{
+  position:absolute;top:20px;right:20px;width:40px;height:40px;
+  background:rgba(255,255,255,0.15);border:none;border-radius:50%;
+  color:white;font-size:20px;cursor:pointer;display:flex;
+  align-items:center;justify-content:center;
+}
+
+/* ANIMATIONS */
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(20px)}
+  to{opacity:1;transform:translateY(0)}
+}
+@keyframes pulse{
+  0%,100%{opacity:0.6}
+  50%{opacity:1}
+}
+
+/* BACK BUTTON */
+.back-btn{
+  position:absolute;top:12px;left:12px;z-index:10;
+  width:36px;height:36px;border-radius:50%;border:none;
+  background:rgba(255,255,255,0.7);color:var(--text);
+  font-size:18px;cursor:pointer;display:none;
+  align-items:center;justify-content:center;
+  box-shadow:0 2px 8px rgba(0,0,0,0.1);
+  backdrop-filter:blur(8px);
+}
+.back-btn.visible{display:flex}
+</style>
+</head>
+<body>
+
+<!-- FLOATING HEARTS -->
+<div class="hearts-container" id="heartsContainer"></div>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <button class="lightbox-close" onclick="closeLightbox()">&times;</button>
+  <img class="lightbox-img" id="lightboxImg" src="" alt="Foto ampliada">
+</div>
+
+<!-- CARD -->
+<div class="card-wrapper">
+  <div class="book">
+
+    <!-- PAGE 1 -->
+    <div class="page page-front" id="pageFront">
+      <div class="front-content">
+        <!-- Ornament SVG -->
+        <svg class="ornament-top" viewBox="0 0 120 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M60 28C40 28 25 20 10 15C20 12 35 5 60 5C85 5 100 12 110 15C95 20 80 28 60 28Z" stroke="#d4a96a" stroke-width="0.8" fill="none" opacity="0.6"/>
+          <circle cx="60" cy="16" r="3" fill="#d4a96a" opacity="0.4"/>
+          <line x1="20" y1="16" x2="52" y2="16" stroke="#d4a96a" stroke-width="0.5" opacity="0.4"/>
+          <line x1="68" y1="16" x2="100" y2="16" stroke="#d4a96a" stroke-width="0.5" opacity="0.4"/>
+        </svg>
+
+        <span class="front-subtitle">Para ti, Mamá</span>
+        <h1 class="front-title">Feliz Día<em>de la Madre</em></h1>
+
+        <!-- Horizontal photo placeholder -->
+        <div class="photo-frame-h" id="photoMain">
+          <img src="foto_familiar.jpeg" alt="Foto familiar">
+        </div>
+
+        <div class="front-divider"></div>
+        <span class="front-hint">✦ La tarjeta se voltea en un momento ✦</span>
+
+        <svg class="ornament-bottom" viewBox="0 0 120 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M60 28C40 28 25 20 10 15C20 12 35 5 60 5C85 5 100 12 110 15C95 20 80 28 60 28Z" stroke="#d4a96a" stroke-width="0.8" fill="none" opacity="0.6"/>
+          <circle cx="60" cy="16" r="3" fill="#d4a96a" opacity="0.4"/>
+          <line x1="20" y1="16" x2="52" y2="16" stroke="#d4a96a" stroke-width="0.5" opacity="0.4"/>
+          <line x1="68" y1="16" x2="100" y2="16" stroke="#d4a96a" stroke-width="0.5" opacity="0.4"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- PAGE 2 -->
+    <div class="page page-back">
+      <button class="back-btn" id="backBtn" onclick="flipBack()">‹</button>
+      <div class="back-content">
+        <div class="back-header">
+          <h2>Nuestros Momentos ♡</h2>
+          <div class="line"></div>
+        </div>
+
+        <div class="photos-row">
+          <div class="photo-frame-v" onclick="openLightbox(this)">
+            <img src="foto1.jpeg" alt="Foto 1">
+            <span class="tap-hint">Toca para ampliar</span>
+          </div>
+          <div class="photo-frame-v" onclick="openLightbox(this)">
+            <img src="foto2.jpeg" alt="Foto 2">
+            <span class="tap-hint">Toca para ampliar</span>
+          </div>
+        </div>
+
+        <div class="message-box">
+          <p>Mi amor, hoy celebro el Día de la Madre, pero sobre todo celebro haberte elegido a ti como mamá de nuestros hijos. Gracias por tu amor tan grande, por tu paciencia infinita, por las noches sin dormir y por convertir cada día en algo especial. Eres la mejor mamá del mundo y la esposa más maravillosa que podría tener. Gracias por hacerme tan feliz y por hacer de nuestra familia el lugar más bonito del mundo. Te amo con todo mi corazón.</p>
+          <p class="firma">Con amor tu Familia ♡</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// Auto-flip after 2 seconds
+let flipped = false;
+setTimeout(() => {
+  if (!flipped) flipCard();
+}, 2000);
+
+function flipCard() {
+  flipped = true;
+  document.getElementById('pageFront').classList.add('flipped');
+  document.getElementById('backBtn').classList.add('visible');
+}
+
+function flipBack() {
+  flipped = false;
+  document.getElementById('pageFront').classList.remove('flipped');
+  document.getElementById('backBtn').classList.remove('visible');
+}
+
+// Lightbox
+function openLightbox(el) {
+  const img = el.querySelector('img');
+  if (!img) return;
+  document.getElementById('lightboxImg').src = img.src;
+  document.getElementById('lightbox').classList.add('active');
+}
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('active');
+}
+
+// Floating hearts
+function createHeart() {
+  const container = document.getElementById('heartsContainer');
+  const heart = document.createElement('div');
+  heart.className = 'heart';
+  const size = 14 + Math.random() * 20;
+  const x = Math.random() * 100;
+  const dur = 6 + Math.random() * 8;
+  const delay = Math.random() * 2;
+  const colors = ['#e8a0bf','#c7698d','#d4a96a','#f5d5e0','#c5cfc6'];
+  const color = colors[Math.floor(Math.random() * colors.length)];
+
+  heart.style.cssText = `left:${x}%;animation-duration:${dur}s;animation-delay:${delay}s;`;
+  heart.innerHTML = `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="${color}"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>`;
+
+  container.appendChild(heart);
+  setTimeout(() => heart.remove(), (dur + delay) * 1000);
+}
+
+// Spawn hearts periodically
+setInterval(createHeart, 800);
+for (let i = 0; i < 5; i++) setTimeout(createHeart, i * 300);
+</script>
+</body>
+</html>
